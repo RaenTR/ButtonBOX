@@ -1,0 +1,38 @@
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+.vs/
+
+# Build Folders
+server/bin/
+server/obj/
+mobile/app/build/
+mobile/.gradle/
+**/build/
+**/bin/
+**/obj/
+
+# User Specific
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# System Files
+Thumbs.db
+Desktop.ini
+
+# Android Specific
+local.properties
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aar
+
+# Kits & Backup
+vudovn-AntiGravity-Kit/
+*.zip
+*.rar

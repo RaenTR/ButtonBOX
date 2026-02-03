@@ -1,0 +1,93 @@
+{
+    "buttons": [
+        {
+            "id": "light_switch",
+            "label": "Farlar",
+            "type": "ROTARY",
+            "scanCode": 62,
+            "maxValue": 3
+        },
+        {
+            "id": "wipers",
+            "label": "Silecekler",
+            "type": "ROTARY",
+            "scanCode": 25,
+            "maxValue": 3
+        },
+        {
+            "id": "motor",
+            "label": "Motor Başlat",
+            "type": "PUSH",
+            "scanCode": 18,
+            "maxValue": 1
+        },
+        {
+            "id": "parking_brake",
+            "label": "Park Freni",
+            "type": "PUSH",
+            "scanCode": 57,
+            "maxValue": 1
+        },
+        {
+            "id": "hazards",
+            "label": "Dörtlüler",
+            "type": "PUSH",
+            "scanCode": 33,
+            "maxValue": 1
+        },
+        {
+            "id": "beacon",
+            "label": "Tepe Lambası",
+            "type": "PUSH",
+            "scanCode": 24,
+            "maxValue": 1
+        },
+        {
+            "id": "l_win_down",
+            "label": "Sol Cam ↓",
+            "type": "PUSH",
+            "scanCode": 82,
+            "maxValue": 1
+        },
+        {
+            "id": "l_win_up",
+            "label": "Sol Cam ↑",
+            "type": "PUSH",
+            "scanCode": 79,
+            "maxValue": 1
+        },
+        {
+            "id": "r_win_down",
+            "label": "Sağ Cam ↓",
+            "type": "PUSH",
+            "scanCode": 80,
+            "maxValue": 1
+        },
+        {
+            "id": "r_win_up",
+            "label": "Sağ Cam ↑",
+            "type": "PUSH",
+            "scanCode": 81,
+            "maxValue": 1
+        },
+        {
+            "id": "tra_attach",
+            "label": "Dorse Bağla",
+            "type": "PUSH",
+            "scanCode": 20,
+            "maxValue": 1
+        },
+        {
+            "id": "accept",
+            "label": "Onayla (Enter)",
+            "type": "PUSH",
+            "scanCode": 28,
+            "maxValue": 1
+        }
+    ],
+    "server": {
+        "port": 8888,
+        "theme": "dark",
+        "language": "tr"
+    }
+}
