@@ -1,6 +1,8 @@
 package com.ets2.buttonbox.ui.components
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.Spring
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -41,7 +43,7 @@ fun RotarySwitch(
     
     val rotation by animateFloatAsState(
         targetValue = targetRotation,
-        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumLow, stiffness = Spring.StiffnessLow),
+        animationSpec = spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessLow),
         label = "rotation"
     )
 

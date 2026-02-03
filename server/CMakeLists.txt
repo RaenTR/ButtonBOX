@@ -14,6 +14,7 @@ include_directories(include src)
 file(GLOB_RECURSE SOURCES 
     "src/*.cpp"
     "src/*.h"
+    "src/*.rc"
 )
 
 # App Manifest for Administrator privileges

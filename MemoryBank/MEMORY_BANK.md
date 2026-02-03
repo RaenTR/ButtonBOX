@@ -46,26 +46,28 @@ Sistem, web/tarayıcı teknolojilerinden kaçınarak tamamen **Native** (yerel) 
 
 ### 🔹 Kısa Vade (Cila)
 - [x] **JSON Config:** Butonların koddan değil, `buttons.json` dosyasından okunması.
-- [ ] **Otomatik IP:** Mobil uygulamanın bilgisayarı ağda otomatik bulması (UDP Discovery).
-- [ ] **Dashboard Özelleştirme:** Kullanıcının buton yerleşimini tablet üzerinden değiştirebilmesi.
+- [x] **Otomatik IP:** Mobil uygulamanın bilgisayarı ağda otomatik bulması (UDP Discovery).
+- [x] **Aksiyon Seçici (Action Picker):** ETS2 için önceden tanımlı aksiyon (kontak, ışıklar, korna vb.) seçebilme özelliği.
+- [x] **Sesli Uyarı (TTS):** Navigasyon ve oyun durumu değişikliklerinde sesli geri bildirim (Kısa vadeden tamamlandı).
 
 ### 🔹 Orta Vade (Gelişmiş Özellikler)
-- [ ] **Harita Desteği:** ETS2 haritasının anlık olarak tablet ekranında gösterilmesi.
+- [x] **Harita/Rota Desteği:** F3 GPS navigasyon ekranı ve rota bilgisi (Şehirler arası takip).
+- [ ] **Sürükle-Bırak Düzenleme:** Tablet üzerinden butonların sırasını değiştirebilme (Şu an sadece düzenleme modu var).
 - [ ] **Log Verileri:** Yakıt tüketimi, kalan yol süresi gibi detaylı göstergelerin eklenmesi.
-- [ ] **Ses Söylentisi:** Telsiz sesi veya geri vites bip sesi gibi ekstra efektler.
 
 ### 🔹 Uzun Vade (Ekosistem)
-- [ ] **Çoklu Tablet Desteği:** Bir tabletin harita, diğerinin kontrol paneli olarak kullanılması.
-- [ ] **Arayüz Temaları:** Scania, Volvo veya Mercedes tırlarına özel UI kaplamaları.
+- [ ] **Profesör Seviyesi Telemetry:** Lastik sıcaklığı, yağ basıncı, turbo basıncı gibi derin veriler.
+- [ ] **Hız Sınırı:** Navigasyonda hız sınırı tabelası gösterimi.
+- [ ] **Analog Göstergeler:** İbreli hız ve RPM kadranları.
 
 ---
 
 ## ⚠️ Kritik Bilgiler (Memory Bits)
 - **Terimler:** `Client` -> `İstemci`, `Server` -> `Sunucu`.
-- **Gelişmiş Telemetry:** Yakıt tüketimi, kalan süre, tır modeli ve dinlenme süresi takibi.
-- **Harita Desteği:** F3 GPS tarzı dinamik radar (GPS Scanning effect).
-- **Otomatik IP:** UDP Discovery desteği (8889 portu).
+- **Telemetry Plugin:** Mutlu son için `scs-telemetry.dll` kullanılmalıdır.
+- **Harita Desteği:** F3 GPS tarzı dinamik rota gösterimi.
+- **Otomatik IP:** UDP Discovery desteği (8889 portu) ile otomatik eşleşme.
 - **Tablet Optimizasyonu:** Hometech Alfa 8SL (1280x800) tam uyumlu premium layout.
-- **Döner Anahtar:** 270 derece animasyonlu kontrol (Wipers/Lights).
+- **Action Picker:** +100 hazır ETS2 komutu kategorize edilmiş halde uygulamaya eklendi.
 - **Dil:** %100 Türkçe.
 - **Referans:** Proje vudovn-AntiGravity-Kit standartlarına göre yazılmıştır.

@@ -24,8 +24,11 @@ class UDPDiscoveryClient(private val context: Context) {
     suspend fun discoverServers(): List<ServerInfo> = withContext(Dispatchers.IO) {
         val servers = mutableListOf<ServerInfo>()
         var socket: DatagramSocket? = null
-
+        val wifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        val lock = wifiManager.createMulticastLock("ButtonBoxDiscovery")
+        
         try {
+            lock.acquire()
             socket = DatagramSocket()
             socket.soTimeout = TIMEOUT
             socket.broadcast = true
@@ -39,7 +42,6 @@ class UDPDiscoveryClient(private val context: Context) {
             val receiveBuffer = ByteArray(1024)
             val receivePacket = DatagramPacket(receiveBuffer, receiveBuffer.size)
 
-            // Belirlenen süre boyunca gelen yanıtları topla
             val startTime = System.currentTimeMillis()
             while (System.currentTimeMillis() - startTime < TIMEOUT) {
                 try {
@@ -56,7 +58,6 @@ class UDPDiscoveryClient(private val context: Context) {
                         ))
                     }
                 } catch (e: Exception) {
-                    // Timeout veya hata durumunda döngü devam edebilir veya bitebilir
                     break
                 }
             }
@@ -64,17 +65,15 @@ class UDPDiscoveryClient(private val context: Context) {
             e.printStackTrace()
         } finally {
             socket?.close()
+            if (lock.isHeld) lock.release()
         }
 
-        servers.distinctBy { it.ip } // Aynı IP'den gelen çoklu yanıtları engelle
+        servers.distinctBy { it.ip }
     }
 
     private fun getBroadcastAddress(): InetAddress {
-        val wifi = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
-        val dhcp: DhcpInfo = wifi.dhcpInfo
-        val broadcast = (dhcp.ipAddress and dhcp.netmask) or dhcp.netmask.inv()
-        val quads = ByteArray(4)
-        for (k in 0..3) quads[k] = (broadcast shr k * 8 and 0xFF).toByte()
-        return InetAddress.getByAddress(quads)
+        // 255.255.255.255 yerel ağdaki her cihaza ulaşmak için en güvenli yoldur.
+        // Bazı Android sürümlerinde arayüz bazlı broadcast sorun çıkarabilir.
+        return InetAddress.getByName("255.255.255.255")
     }
 }

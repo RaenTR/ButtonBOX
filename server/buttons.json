@@ -4,7 +4,7 @@
             "id": "light_switch",
             "label": "Farlar",
             "type": "ROTARY",
-            "scanCode": 62,
+            "scanCode": 38,
             "maxValue": 3
         },
         {

@@ -31,18 +31,19 @@ fun KeyboardPicker(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            "KLAVYEDEN TUŞ SEÇİN",
+            "KLAVYEDEN TU\u015e SE\u00c7\u0130N",
             color = Color.Cyan,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 8.dp)
+            fontSize = 16.sp,
+            fontWeight = FontWeight.ExtraBold,
+            modifier = Modifier.padding(bottom = 12.dp)
         )
 
         LazyColumn(
-            modifier = Modifier.weight(1f, fill = false),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            contentPadding = PaddingValues(bottom = 16.dp)
         ) {
-            // Ana Klavye Satırları
+            // Ana Klavye Sat\u0131rlar\u0131
             item { KeyRow(ScanCodes.ROW1, onKeySelected) }
             item { KeyRow(ScanCodes.ROW2, onKeySelected) }
             item { KeyRow(ScanCodes.ROW3, onKeySelected) }
@@ -54,13 +55,27 @@ fun KeyboardPicker(
             
             // Navigasyon ve Oklar
             item {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.Top
+                ) {
+                    Column(
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
                         KeyRow(ScanCodes.NAVIGATION.chunked(3)[0], onKeySelected)
                         KeyRow(ScanCodes.NAVIGATION.chunked(3)[1], onKeySelected)
                         KeyRow(ScanCodes.NAVIGATION.chunked(3)[2], onKeySelected)
                     }
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    
+                    Spacer(modifier = Modifier.width(20.dp))
+
+                    Column(
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp), 
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                         KeyItem(ScanCodes.ARROWS[0], onKeySelected) // Up
                         Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                             KeyItem(ScanCodes.ARROWS[1], onKeySelected) // Left
@@ -73,13 +88,15 @@ fun KeyboardPicker(
 
             item { Spacer(modifier = Modifier.height(12.dp)) }
 
-            // NUMPAD Bölümü
+            // NUMPAD B\u00f6l\u00fcm\u00fc
             item {
-                Text("NUMPAD (SAYI TUŞLARI)", color = Color.Gray, fontSize = 10.sp, modifier = Modifier.padding(bottom = 4.dp))
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    val chunks = ScanCodes.NUMPAD.chunked(4)
-                    chunks.forEach { chunk ->
-                        KeyRow(chunk, onKeySelected)
+                Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text("NUMPAD", color = Color.Gray, fontSize = 10.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 4.dp))
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        val chunks = ScanCodes.NUMPAD.chunked(4)
+                        chunks.forEach { chunk ->
+                            KeyRow(chunk, onKeySelected)
+                        }
                     }
                 }
             }
@@ -103,18 +120,16 @@ fun KeyRow(keys: List<KeyInfo>, onKeySelected: (KeyInfo) -> Unit) {
 
 @Composable
 fun KeyItem(key: KeyInfo, onKeySelected: (KeyInfo) -> Unit) {
-    val weight = when (key.label) {
-        "SPACE" -> 4f
-        "ESC", "TAB", "CAPS", "LSHFT", "RSHFT", "ENT", "LCTRL", "RCTRL", "LALT", "RALT", "WIN" -> 1.5f
-        else -> 1f
-    }
-
     Box(
         modifier = Modifier
-            .width(if (key.label == "SPACE") 120.dp else 45.dp)
-            .height(40.dp)
-            .clip(RoundedCornerShape(4.dp))
-            .background(Color(0xFF252525))
+            .width(when {
+                key.label == "SPACE" -> 160.dp
+                key.label.length > 3 -> 60.dp
+                else -> 42.dp
+            })
+            .height(38.dp)
+            .clip(RoundedCornerShape(6.dp))
+            .background(Color(0xFF2A2A2A))
             .clickable { onKeySelected(key) },
         contentAlignment = Alignment.Center
     ) {
@@ -122,12 +137,12 @@ fun KeyItem(key: KeyInfo, onKeySelected: (KeyInfo) -> Unit) {
             Text(
                 text = key.label,
                 color = Color.White,
-                fontSize = if (key.label.length > 3) 8.sp else 11.sp,
+                fontSize = if (key.label.length > 3) 9.sp else 12.sp,
                 fontWeight = FontWeight.Bold
             )
             Text(
                 text = key.scanCode.toString(),
-                color = Color.Gray,
+                color = Color.Gray.copy(0.6f),
                 fontSize = 7.sp
             )
         }

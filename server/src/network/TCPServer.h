@@ -6,6 +6,7 @@
 #include <functional>
 #include <atomic>
 #include <thread>
+#include <format>
 #include "../core/Logger.h"
 
 namespace Network {
@@ -20,14 +21,14 @@ public:
     bool Start() {
         WSADATA wsaData;
         if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
-            Core::Logger::LogError("WSAStartup basarisiz.");
+            Core::Logger::LogError("WSAStartup başarısız.");
             return false;
         }
 
         // IPv6 soketi oluştur (Dual-stack için)
         m_ListenSocket = socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP);
         if (m_ListenSocket == INVALID_SOCKET) {
-            Core::Logger::LogError("Soket olusturulamadi.");
+            Core::Logger::LogError("Soket oluşturulamadı.");
             WSACleanup();
             return false;
         }
@@ -45,14 +46,14 @@ public:
         serverAddr.sin6_port = htons(m_Port);
 
         if (bind(m_ListenSocket, (sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR) {
-            Core::Logger::LogError(std::format("Bind islemi basarisiz (Port: {}). Hata: {}", m_Port, WSAGetLastError()));
+            Core::Logger::LogError(std::format("Bağ (bind) işlemi başarısız (Port: {}). Hata: {}", m_Port, WSAGetLastError()));
             closesocket(m_ListenSocket);
             WSACleanup();
             return false;
         }
 
         if (listen(m_ListenSocket, SOMAXCONN) == SOCKET_ERROR) {
-            Core::Logger::LogError("Listen islemi basarisiz.");
+            Core::Logger::LogError("Dinleme (listen) işlemi başarısız.");
             closesocket(m_ListenSocket);
             WSACleanup();
             return false;
@@ -60,7 +61,7 @@ public:
 
         m_Running = true;
         m_AcceptThread = std::thread(&TCPServer::AcceptLoop, this);
-        Core::Logger::LogInfo(std::format("TCP Sunucu {} portunda dinlemede.", m_Port));
+        Core::Logger::LogInfo(std::format("TCP Sunucu {} portunda dinlemede (IPv6/Dual-stack).", m_Port));
         return true;
     }
 
@@ -91,6 +92,10 @@ public:
         }
     }
 
+    void Broadcast(const std::string& data) {
+        SendToClient(data);
+    }
+
     // Profiling için istatistikleri al
     uint64_t GetBytesSent() { return m_BytesSent.exchange(0); }
     uint64_t GetBytesReceived() { return m_BytesReceived.exchange(0); }
@@ -108,17 +113,22 @@ private:
             }
 
             // Yeni bağlantı geldiğinde, varsa eskiyi temizle (Smart Reconnect - Zombi temizliği)
-            if (m_ClientSocket != INVALID_SOCKET) {
-                Core::Logger::LogWarn("Mevcut bağlantı üzerine yeni bağlantı geldi. Eski bağlantı sonlandırılıyor...");
-                closesocket(m_ClientSocket);
-                m_ClientSocket = INVALID_SOCKET;
-                if (m_ClientThread.joinable()) m_ClientThread.join();
+            if (m_ClientThread.joinable()) {
+                if (m_ClientSocket != INVALID_SOCKET) {
+                    Core::Logger::LogWarn("Eski bağlantı üzerine yeni bağlantı geldi. Eski sonlandırılıyor...");
+                    closesocket(m_ClientSocket);
+                    m_ClientSocket = INVALID_SOCKET;
+                }
+                m_ClientThread.join();
             }
 
             char ipStr[INET6_ADDRSTRLEN];
             inet_ntop(AF_INET6, &clientAddr.sin6_addr, ipStr, INET6_ADDRSTRLEN);
-            Core::Logger::LogInfo(std::format("Yeni istemci bağlandı: {}", ipStr));
-            GUI::Dashboard::GetInstance().UpdateClient(std::format("{} 🟢", ipStr));
+            std::string ip(ipStr);
+            if (ip.find("::ffff:") == 0) ip = ip.substr(7);
+            
+            Core::Logger::LogInfo(std::format("Yeni istemci bağlandı: {}", ip));
+            GUI::Dashboard::GetInstance().UpdateClient(std::format("{} 🟢", ip));
 
             // --- TCP_NODELAY OPTİMİZASYONU ---
             BOOL nodelay = TRUE;

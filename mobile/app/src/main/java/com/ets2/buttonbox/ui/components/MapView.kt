@@ -99,7 +99,7 @@ fun MapView(
             // Breadcrumbs Path (The Trail)
             if (pathPoints.size > 1) {
                 val drawPath = Path()
-                pathPoints.forEachIndexed { index, point ->
+                pathPoints.forEachIndexed { _, point ->
                     val relX = center.x + (point.x - posX) * scale
                     val relY = center.y + (point.y - posZ) * scale
                     

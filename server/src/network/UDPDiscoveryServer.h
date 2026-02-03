@@ -21,24 +21,31 @@ public:
     bool Start() {
         m_Socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
         if (m_Socket == INVALID_SOCKET) {
-            Core::Logger::LogError("UDP soket olusturulamadi.");
+            Core::Logger::LogError("UDP soket oluşturulamadı.");
             return false;
         }
 
+        // Broadcast izni ver
+        BOOL broadcast = TRUE;
+        if (setsockopt(m_Socket, SOL_SOCKET, SO_BROADCAST, (const char*)&broadcast, sizeof(broadcast)) == SOCKET_ERROR) {
+            Core::Logger::LogWarn("UDP Broadcast modu aktif edilemedi.");
+        }
+
         sockaddr_in serverAddr;
+        memset(&serverAddr, 0, sizeof(serverAddr));
         serverAddr.sin_family = AF_INET;
         serverAddr.sin_addr.s_addr = INADDR_ANY;
         serverAddr.sin_port = htons(m_ListenPort);
 
         if (bind(m_Socket, (sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR) {
-            Core::Logger::LogError("UDP bind islemi basarisiz.");
+            Core::Logger::LogError(std::format("UDP bağ (bind) işlemi başarısız (Port: {}). Hata: {}", m_ListenPort, WSAGetLastError()));
             closesocket(m_Socket);
             return false;
         }
 
         m_Running = true;
         m_Thread = std::thread(&UDPDiscoveryServer::DiscoveryLoop, this);
-        Core::Logger::LogInfo(std::format("UDP Discovery {} portunda aktif.", m_ListenPort));
+        Core::Logger::LogInfo(std::format("UDP Discovery (IPv4) {} portunda aktif.", m_ListenPort));
         return true;
     }
 
@@ -55,10 +62,11 @@ private:
     void DiscoveryLoop() {
         char buffer[1024];
         sockaddr_in clientAddr;
-        int clientAddrSize = sizeof(clientAddr);
 
         while (m_Running) {
+            int clientAddrSize = sizeof(clientAddr);
             int bytesReceived = recvfrom(m_Socket, buffer, sizeof(buffer) - 1, 0, (sockaddr*)&clientAddr, &clientAddrSize);
+            
             if (bytesReceived > 0) {
                 buffer[bytesReceived] = '\0';
                 std::string msg(buffer);
@@ -70,6 +78,12 @@ private:
                     );
                     sendto(m_Socket, response.c_str(), (int)response.length(), 0, (sockaddr*)&clientAddr, clientAddrSize);
                 }
+            } else if (bytesReceived < 0) {
+                int error = WSAGetLastError();
+                if (error != WSAEINTR && m_Running) {
+                    Core::Logger::LogWarn(std::format("UDP Discovery soket hatası (Hata: {}). Döngü durduruluyor.", error));
+                }
+                break; // Hata durumunda busy loop engellemek için döngüyü bitir
             }
         }
     }

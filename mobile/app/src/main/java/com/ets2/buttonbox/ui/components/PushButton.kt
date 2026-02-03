@@ -33,7 +33,6 @@ fun PushButton(
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     val scale by animateFloatAsState(if (isPressed) 0.94f else 1f, label = "scale")
-    val glowAlpha by animateFloatAsState(if (isPressed) 0.6f else 0f, label = "glow")
 
     Box(
         contentAlignment = Alignment.Center,

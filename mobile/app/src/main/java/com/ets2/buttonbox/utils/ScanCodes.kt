@@ -18,24 +18,24 @@ object ScanCodes {
     val ROW3 = listOf(
         KeyInfo("TAB", 15), KeyInfo("Q", 16), KeyInfo("W", 17), KeyInfo("E", 18), KeyInfo("R", 19),
         KeyInfo("T", 20), KeyInfo("Y", 21), KeyInfo("U", 22), KeyInfo("I", 23), KeyInfo("O", 24),
-        KeyInfo("P", 25), KeyInfo("[", 26), KeyInfo("]", 27), KeyInfo("ENT", 28)
+        KeyInfo("P", 25), KeyInfo("\u011e", 26), KeyInfo("\u00dc", 27), KeyInfo("ENT", 28)
     )
 
     val ROW4 = listOf(
         KeyInfo("CAPS", 58), KeyInfo("A", 30), KeyInfo("S", 31), KeyInfo("D", 32), KeyInfo("F", 33),
         KeyInfo("G", 34), KeyInfo("H", 35), KeyInfo("J", 36), KeyInfo("K", 37), KeyInfo("L", 38),
-        KeyInfo(";", 39), KeyInfo("'", 40), KeyInfo("\\", 43)
+        KeyInfo("\u015e", 39), KeyInfo("\u0130", 40), KeyInfo(",", 43)
     )
 
     val ROW5 = listOf(
-        KeyInfo("LSHFT", 42), KeyInfo("Z", 44), KeyInfo("X", 45), KeyInfo("C", 46), KeyInfo("V", 47),
-        KeyInfo("B", 48), KeyInfo("N", 49), KeyInfo("M", 50), KeyInfo(",", 51), KeyInfo(".", 52),
-        KeyInfo("/", 53), KeyInfo("RSHFT", 54)
+        KeyInfo("LSHFT", 42), KeyInfo("<", 86), KeyInfo("Z", 44), KeyInfo("X", 45), KeyInfo("C", 46), KeyInfo("V", 47),
+        KeyInfo("B", 48), KeyInfo("N", 49), KeyInfo("M", 50), KeyInfo("\u00d6", 51), KeyInfo("\u00c7", 52),
+        KeyInfo(".", 53), KeyInfo("RSHFT", 54)
     )
 
     val ROW6 = listOf(
         KeyInfo("LCTRL", 29), KeyInfo("WIN", 219), KeyInfo("LALT", 56), KeyInfo("SPACE", 57),
-        KeyInfo("RALT", 184), KeyInfo("RCTRL", 157)
+        KeyInfo("RALT", 184), KeyInfo("FN", 255), KeyInfo("RCTRL", 157)
     )
 
     val NAVIGATION = listOf(

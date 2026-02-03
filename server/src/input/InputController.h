@@ -10,6 +10,7 @@
 #include <thread>
 #include <atomic>
 #include <condition_variable>
+#include <format>
 #include "../core/Logger.h"
 
 namespace Input {
@@ -27,14 +28,14 @@ public:
         if (m_Running) return;
         m_Running = true;
         m_WorkerThread = std::thread(&InputController::WorkerLoop, this);
-        Core::Logger::LogInfo("Input Worker Thread baslatildi.");
+        Core::Logger::LogInfo("Giriş dinleyici thread başlatıldı.");
     }
 
     void Shutdown() {
         m_Running = false;
         m_CV.notify_all();
         if (m_WorkerThread.joinable()) m_WorkerThread.join();
-        Core::Logger::LogInfo("Input Worker Thread durduruldu.");
+        Core::Logger::LogInfo("Giriş dinleyici thread durduruldu.");
     }
 
     // Belirli bir tuşu kuyruğa ekle (Asenkron)
@@ -72,10 +73,10 @@ private:
             {
                 std::lock_guard<std::mutex> lock(m_InputMutex);
                 SendInputInternal(scanCode, true);  // Down
-                Sleep(40);                          // ETS2 için bekleme (Queue sayesinde ana thread'i bloklamaz)
+                Sleep(60);                          // ETS2 için bekleme süresi artırıldı (40->60)
                 SendInputInternal(scanCode, false); // Up
             }
-            Sleep(10); // Tuşlar arası min. boşluk
+            Sleep(20); // Tuşlar arası min. boşluk artırıldı
         }
     }
 
@@ -83,10 +84,16 @@ private:
         INPUT input = { 0 };
         input.type = INPUT_KEYBOARD;
         input.ki.wScan = scanCode;
-        input.ki.dwFlags = KEYEVENTF_SCANCODE | (down ? 0 : KEYEVENTF_KEYUP);
+        
+        // Scan code > 127 ise veya belirli ok tuşları ise Extended flag ekle
+        DWORD flags = KEYEVENTF_SCANCODE | (down ? 0 : KEYEVENTF_KEYUP);
+        if (scanCode > 127 || (scanCode >= 0x47 && scanCode <= 0x53)) {
+            flags |= KEYEVENTF_EXTENDEDKEY;
+        }
+        input.ki.dwFlags = flags;
 
         if (SendInput(1, &input, sizeof(INPUT)) == 0) {
-            Core::Logger::LogError(std::format("SendInput basarisiz! Hata: {}", GetLastError()));
+            Core::Logger::LogError(std::format("SendInput ba\u015far\u0131s\u0131z! Hata: {}", GetLastError()));
         }
     }
 

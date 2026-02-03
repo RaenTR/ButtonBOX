@@ -35,6 +35,8 @@ enum class ControlType {
         ControlType type;
         uint16_t scanCode;
         int32_t maxValue;
+        int32_t color = -1;       // -1: Varsayılan
+        std::string icon = "";    // Boş: Varsayılan
     };
 
     class ConfigManager {
@@ -60,6 +62,8 @@ enum class ControlType {
                         config.type = StringToType(btn["type"]);
                         config.scanCode = (uint16_t)btn["scanCode"];
                         config.maxValue = (btn.contains("maxValue") ? (int)btn["maxValue"] : 0);
+                        config.color = (btn.contains("color") ? (int)btn["color"] : -1);
+                        config.icon = (btn.contains("icon") ? btn["icon"].get<std::string>() : "");
                         m_Buttons[config.id] = config;
                     }
                 }
@@ -79,6 +83,8 @@ enum class ControlType {
                     btn["type"] = TypeToString(val.type);
                     btn["scanCode"] = val.scanCode;
                     btn["maxValue"] = val.maxValue;
+                    if (val.color != -1) btn["color"] = val.color;
+                    if (!val.icon.empty()) btn["icon"] = val.icon;
                     data["buttons"].push_back(btn);
                 }
                 data["server"] = { {"port", 8888}, {"theme", "dark"}, {"language", "tr"} };
@@ -88,15 +94,19 @@ enum class ControlType {
             } catch (...) { return false; }
         }
 
-        void UpdateButton(const std::string& id, const std::string& label, uint16_t scanCode) {
+        void UpdateButton(const std::string& id, const std::string& label, uint16_t scanCode, int32_t color = -1, const std::string& icon = "") {
             std::lock_guard<std::mutex> lock(m_Mutex);
             if (m_Buttons.contains(id)) {
                 m_Buttons[id].label = label;
                 m_Buttons[id].scanCode = scanCode;
-                // SaveConfig'i doğrudan çağırma (re-entrant lock sorunu olmaması için)
-                // Ama burada SaveConfig() zaten mutex alıyor. nested lock için recursive_mutex gerekir.
-                // Basitlik için kopyalıyoruz veya private bir SaveInternal yapıyoruz.
+                if (color != -1) m_Buttons[id].color = color;
+                if (!icon.empty()) m_Buttons[id].icon = icon;
             }
+        }
+
+        bool SaveConfig(const std::string& path) {
+            m_LastPath = path;
+            return SaveConfig();
         }
 
         std::map<std::string, ButtonConfig> GetAllButtons() {

@@ -4,6 +4,7 @@
 #include <winsock2.h>
 #include <windows.h>
 #include <string>
+#include <chrono>
 #include "../core/Logger.h"
 #include "../state/StateManager.h"
 #include "../gui/Dashboard.h"
@@ -28,6 +29,7 @@ struct PACKED_TelemetryData {
     uint32_t lights_low_beam;
     uint32_t lights_high_beam;
     uint32_t wipers;
+    uint32_t beacon;
     uint32_t parking_brake;
     uint32_t motor_running;
 
@@ -99,6 +101,7 @@ public:
                 m_MapFile = NULL;
             }
         }
+        Core::Logger::LogWarn("ETS2 Shared Memory alanı bulunamadı! SCS Telemetry Plugin (scs-telemetry.dll) yüklü mü?");
         return false;
     }
 
@@ -128,6 +131,7 @@ public:
         sm.UpdateState("engine_running", m_Data->motor_running > 0);
         sm.UpdateState("lights_low", m_Data->lights_low_beam > 0);
         sm.UpdateState("lights_high", m_Data->lights_high_beam > 0);
+        sm.UpdateState("beacon", m_Data->beacon > 0);
         sm.UpdateState("wipers", (int)m_Data->wipers);
         sm.UpdateState("parking_brake", m_Data->parking_brake > 0);
 
